@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "@types/node": "^20.11.30",
+    "utility-types": "^3.11.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0"
+  }
+}
