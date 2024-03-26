@@ -9,9 +9,10 @@ const util = require('util');
 const client_s3_1 = require("@aws-sdk/client-s3");
 async function uploadToS3() {
     try {
-        await multiPartUploadToS3();
-        await blockingIoUpload();
-        console.log('uploadToS3 function ends here.');
+        // await multiPartUploadToS3()
+        // await blockingIoUpload()
+        // nonBlockingIoUpload()
+        // console.log('uploadToS3 function ends here.')
     }
     catch (error) {
         console.log(error);
@@ -40,6 +41,41 @@ async function blockingIoUpload() {
         const totalDuration = endTime - startTime; // Total duration of upload process in milliseconds
         console.log(`blockingIoUpload Upload complete in ${totalDuration}ms`);
         console.log('This operation was blocking.. s3 upload done now.');
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+/**
+ * @description This fn uploads the file to s3 in non blocking mode
+ *
+ */
+function nonBlockingIoUpload() {
+    try {
+        const startTime = performance.now();
+        const readable_chunks = fs_1.default.createReadStream('../large');
+        const s3 = new aws_sdk_1.default.S3();
+        const params = {
+            Bucket: 'medium-demo-shubham',
+            Key: 'video.mp4',
+            Body: readable_chunks,
+        };
+        const upload = s3.upload(params);
+        upload.on('httpUploadProgress', function (progress) {
+            // console.log(`Uploaded ${progress.loaded} bytes`);
+        });
+        upload.send((err, data) => {
+            if (err)
+                console.error('Error uploading file:', err);
+            else {
+                console.log('File uploaded successfully:', data.Location);
+                const endTime = performance.now(); // End time of the upload process
+                const totalDuration = endTime - startTime; // Total duration of upload process in milliseconds
+                console.log(`blockingIoUpload Upload complete in ${totalDuration}ms`);
+            }
+        });
+        console.log('This operation is non blocking.. s3 upload is going on.');
     }
     catch (error) {
         console.log(error);
